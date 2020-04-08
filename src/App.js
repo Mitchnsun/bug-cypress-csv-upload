@@ -21,7 +21,7 @@ const config = {
 function onFileUploaded(setList) {
   return event => {
     const file = event.target.files[0];
-    console.log('## FILE UPLOAD', file);
+    console.log('onFileUploaded', file, typeof file);
     CSVFileValidator(file, config)
       .then(csvData => setList(csvData.data.slice(1)))
       .catch(err => console.error(err))
