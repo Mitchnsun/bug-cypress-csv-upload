@@ -1,23 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import CSVFileValidator from 'csv-file-validator'
 import './App.css';
 
+const config = {
+  headers: [
+    {
+      name: 'ID',
+      inputName: 'id',
+      required: true,
+      unique: true,
+    },
+    {
+      name: 'Name',
+      inputName: 'name',
+      required: true,
+    },
+  ],
+}
+
+function onFileUploaded(setList) {
+  return event => {
+    const file = event.target.files[0];
+    console.log('## FILE UPLOAD', file);
+    CSVFileValidator(file, config)
+      .then(csvData => setList(csvData.data.slice(1)))
+      .catch(err => console.error(err))
+  };
+}
+
 function App() {
+  const [list, setList] = useState([]);
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <h1>
+          Upload CSV
+        </h1>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          <input type="file" accept=".csv" onChange={onFileUploaded(setList)} />
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {list.length ? (
+          <table>
+            <thead>
+              <tr><td>ID</td><td>Name</td></tr>
+            </thead>
+            <tbody>
+              {list.map(item => <tr key={item.id}><td>{item.id}</td><td>{item.name}</td></tr>)}
+            </tbody>
+          </table>
+        ): null}
       </header>
     </div>
   );
